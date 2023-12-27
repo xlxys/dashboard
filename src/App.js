@@ -1,18 +1,58 @@
+import { useState, useEffect } from "react";
 import * as d3 from "d3";
-import { useState } from "react";
-import LinePlot from "./components/LinePlot";
+
+import Plot from "./components/Plot";
+import Map from "./components/Map";
+import Loading from './components/LoadingComponent';
+
+
+import netflixData from "./data/netflix_titles.csv";
+import mapData from "./data/world.geojson";
+
+import { parseData } from "./utilities/parseData";
+
 
 export default function App() {
-  const [data, setData] = useState(() => d3.ticks(-2, 2, 200).map(Math.sin));
 
-  function onMouseMove(event) {
-    const [x, y] = d3.pointer(event);
-    setData(data.slice(-200).concat(Math.atan2(x, y)));
-  }
+  const [numData, setNumData] = useState(null);
+  const [geoData, setGeoData] = useState(null);
+
+  // const [options, setOptions] = useState({
+  //   year: "all",
+  //   type: "all",
+  //   country: "all",
+  //   // rating: "all",
+  //   genre: "all",
+  //   // director: "all",
+  //   // actor: "all",
+  //   duration: "all",
+  // });
+
+
+  useEffect(() => {
+
+    // load data
+    Promise.all([d3.csv(netflixData), d3.json(mapData)])
+      .then((datasets) => {
+        let parsedData = parseData(datasets[0]);
+        setNumData(parsedData);
+        setGeoData(datasets[1]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }, []);
+
 
   return (
-    <div onMouseMove={onMouseMove}>
-      <LinePlot data={data} />
-    </div>
+    <>
+      <Plot data={numData} />
+      {numData != null && geoData != null ? (
+        <Map numData={numData} geoData={geoData} />
+      ) : (
+        <Loading /> // TODO: add loading screen
+      )}
+    </>
   );
 }
