@@ -1,15 +1,16 @@
-export default function parseData(data) {
+export default function parseData(data, options) {
 
+  // TODO director and cast and listed_in need to to be splited and trimed
   // map data to array of objects
   data = data.map((d) => {
     return {
       id: d.show_id,
       type: d.type,
       title: d.title,
-      //? director: d.director,
-      //? cast: d.cast,
+      // TODO director: d.director,
+      // TODO cast: d.cast,
       country: d.country,
-      //? dateAdded: d.date_added,
+      // TODO dateAdded: d.date_added,
       releaseYear: d.release_year,
       rating: d.rating,
       duration: d.duration,
@@ -18,35 +19,30 @@ export default function parseData(data) {
   }
   );
 
-  // list of all the countries
-  let countryList = [];
-  data.forEach((d) => {
-    d.country.split(",").forEach((country) => {
-      country = country.trim();
-      if (country !== "" && !countryList.includes(country)) {
-        countryList.push(country);
-      }
-    });
-  });
-
-  // list of all the genres
-  let genreList = [];
-  data.forEach((d) => {
-    d.listedIn.split(",").forEach((genre) => {
-      genre = genre.trim();
-      if (genre !== "" && !genreList.includes(genre)) {
-        genreList.push(genre);
-      }
-    });
-  });
-
-  // list of all the years
-  let yearList = [];
-  data.forEach((d) => {
-    if (d.releaseYear !== "" && !yearList.includes(d.releaseYear)) {
-      yearList.push(d.releaseYear);
+  // TODO filter data based on options
+  if (options.type["TV Show"]) {
+    if (!options.type["Movie"]) {
+      data = data.filter((d) => d.type === "TV Show");
     }
-  });
+  }
+  else {
+    data = data.filter((d) => d.type === "Movie");
+  }
+
+  if (options.country.length > 0) {
+    
+    data = data.filter((d) => {
+      let found = false;
+      d.country.split(",").forEach((country) => {
+        country = country.trim();
+        if (options.country.includes(country)) {
+          found = true;
+        }
+      });
+      return found;
+    });
+  }
+
 
   // list of all the ratings
   let ratingList = [];
@@ -56,10 +52,9 @@ export default function parseData(data) {
     }
   });
 
-
   
   // get all the countries and the titles of the movies and tv shows in that country
-  // TODO - not all the contries are in the map (Palastine, united kingdom, Soviet Union, etc.)
+  // TODO - not all the contries are in the geojson file (Palastine, united kingdom, Soviet Union, etc.)
   let countries = {};
   data.forEach((d) => {
     d.country.split(",").forEach((country) => {
@@ -75,6 +70,7 @@ export default function parseData(data) {
   });
 
   // get all the genres and the titles of the movies and tv shows in that genre
+ 
   let genres = {};
 
   data.forEach((d) => {
@@ -90,6 +86,8 @@ export default function parseData(data) {
     });
   });
 
+  let genreList = Object.keys(genres);
+
 
   // get all the years and the titles of the movies and tv shows in that year
   let years = {};
@@ -104,8 +102,9 @@ export default function parseData(data) {
   });
 
 
-  // TODO filter data
+  console.log(years);
 
 
-  return { data, countries, genres, years, countryList, genreList, yearList, ratingList};
+
+  return { data, countries, genres, years, genreList, ratingList};
 }
