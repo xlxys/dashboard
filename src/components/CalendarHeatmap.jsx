@@ -1,32 +1,15 @@
 import * as d3 from "d3";
-import { useEffect, useRef, useState, useContext } from "react";
+import { useEffect, useContext } from "react";
 
 import OptionsContext from '../context/OptionsContext';
 
 
-export default function CalendarHeatmap({ data }) {
-  const svgRef = useRef();
-  const [dimensions, setDimensions] = useState({ width: 400, height: 200 });
+export default function CalendarHeatmap({ data, width=400, height=200  }) {
 
   const { options } = useContext(OptionsContext);
 
-
   useEffect(() => {
-    const resizeObserver = new ResizeObserver(entries => {
-      const { width, height } = entries[0].contentRect;
-      setDimensions({ width, height });
-    });
-
-    resizeObserver.observe(svgRef.current);
-
-    const currentSvgRef = svgRef.current;
-
-    return () => resizeObserver.unobserve(currentSvgRef);
-  }, []);
-
-  useEffect(() => {
-    const { width, height } = dimensions;
-    const svg = d3.select(svgRef.current);
+    const svg = d3.select("#heatmap");
     svg.attr('width', width);
     svg.attr('height', height);
 
@@ -89,9 +72,9 @@ export default function CalendarHeatmap({ data }) {
       .style("stroke", "black")
       .style("stroke-width", 1);
 
-  }, [dimensions, options, data]);
+  }, [height, width, options, data]);
 
   return (
-    <svg ref={svgRef} id="heatmap" />
+    <svg id="heatmap" />
   );
 }

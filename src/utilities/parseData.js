@@ -13,13 +13,13 @@ export default function parseData(data, options) {
       // TODO dateAdded: d.date_added,
       releaseYear: d.release_year,
       rating: d.rating,
-      duration: d.duration,
+      // TODO duration: d.duration,
       listedIn: d.listed_in,
     };
   }
   );
 
-  // TODO filter data based on options
+  // type filter
   if (options.type["TV Show"]) {
     if (!options.type["Movie"]) {
       data = data.filter((d) => d.type === "TV Show");
@@ -29,6 +29,7 @@ export default function parseData(data, options) {
     data = data.filter((d) => d.type === "Movie");
   }
 
+  // country filter
   if (options.country.length > 0) {
     
     data = data.filter((d) => {
@@ -42,6 +43,7 @@ export default function parseData(data, options) {
       return found;
     });
   }
+
 
 
   // list of all the ratings
@@ -102,7 +104,16 @@ export default function parseData(data, options) {
   });
 
 
-  console.log(years);
+  
+  // year filter
+  if (options.release_year !== null){
+    data = data.filter((d) =>{
+      console.log(options.release_year)
+      console.log(d.release_year)
+      return options.release_year === d.release_year
+    } )
+  }
+
 
 
 

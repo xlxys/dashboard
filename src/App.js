@@ -11,7 +11,7 @@ import Pie from "./components/Pie";
 import CalendarHeatmap from "./components/CalendarHeatmap";
 
 
-import netflixData from "./data/netflix_titles.csv";
+import netflixData from "./data/pre-processed_netflix_titles.csv";
 import mapData from "./data/world.geojson";
 
 import Grid from '@mui/material/Unstable_Grid2';
@@ -77,7 +77,7 @@ export default function App() {
             </Grid>
             <Grid xs={6}>
               <Item sx={{ width: '100%', height: '400px'}}>
-                <Plot data={numData} />
+                {/* <Plot data={numData} /> */}
               </Item>
             </Grid>
             <Grid xs={6}>
@@ -100,11 +100,11 @@ export default function App() {
             </Grid>
             <Grid xs={4}>
               <Item sx={{ width: '100%', height: '100%' }}>
-                {/* {numData != null ? (
+                {numData != null ? (
                   <Loading />
                 ) : (
                   <Loading />
-                )} */}
+                )}
               </Item>
             </Grid>
             <Grid xs={4}>

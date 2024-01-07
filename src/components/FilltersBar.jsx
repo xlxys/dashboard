@@ -113,7 +113,7 @@ export default function FillterBar({ data }) {
               </MenuItem>
               {data?.genreList?.map((item, index) => {
                 return (
-                  <MenuItem key={index} value={item}>{item}</MenuItem>
+                  <MenuItem key={index} value={item}>{item.toUpperCase()}</MenuItem>
                 )
               })}
             </Select>
