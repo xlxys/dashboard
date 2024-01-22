@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import OptionsContext from '../context/OptionsContext';
 
@@ -19,18 +19,20 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 export default function FillterBar({ data }) {
 
   const [genre, setGenre] = useState('');
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(null);
 
   const { options, setOptions } = useContext(OptionsContext);
 
   const handleChange = (event) => {
     setGenre(event.target.value);
+  }
 
+  useEffect(() => {
     setOptions(prevOptions => ({
       ...prevOptions,
-      genre: genre,
+      genre: genre
     }));
-  }
+  } , [genre]);
 
   const clearOptions = () => {
     setOptions({
@@ -40,7 +42,7 @@ export default function FillterBar({ data }) {
       },
       country: [],
       release_year: null,
-      genre: "All"
+      genre: ''
     });
 
     setGenre('');
@@ -113,7 +115,9 @@ export default function FillterBar({ data }) {
               </MenuItem>
               {data?.genreList?.map((item, index) => {
                 return (
-                  <MenuItem key={index} value={item}>{item.toUpperCase()}</MenuItem>
+                  <MenuItem key={index} value={item}>
+                    <em>{item.toLowerCase()}</em>
+                  </MenuItem>
                 )
               })}
             </Select>
@@ -125,7 +129,9 @@ export default function FillterBar({ data }) {
               <DatePicker
                 label={'Release Year'}
                 views={['year']}
-                value={null}
+                value={date}
+                clearable={true}
+
                 onChange={(newValue) => {
                   // get the year from the date object
                   let year = newValue.year();
@@ -135,11 +141,17 @@ export default function FillterBar({ data }) {
                     release_year: year
                   }));
                 }}
+                
               />
 
             </LocalizationProvider>
           </FormControl>
-          <Button onClick={clearOptions} sx={{ m: 2, minWidth: 120 }} variant="outlined" color="error">
+          <Button 
+            onClick={clearOptions} 
+            sx={{ m: 2, minWidth: 120 }} 
+            variant="outlined" 
+            color="error"
+          >
             Clear
           </Button>
 
